@@ -1,0 +1,18 @@
+---
+name: "Comments"
+guid: "36b969ee-04a5-45de-bb8b-515f642280b3"
+version: "1.0.0.0"
+targetAbi: "10.11.0.0"
+framework: "net9.0"
+overview: "Adds a comment section to your media library."
+description: >
+  A self-hosted comment section for your Jellyfin media. Signed-in users can post,
+  reply, edit, delete and react to comments, including timestamped comments tied to
+  a specific playback position. Data lives in its own SQLite database alongside the
+  server data directory, never in Jellyfin's main database.
+category: "General"
+owner: "everettpenne"
+artifacts:
+- "Jellyfin.Plugin.Comments.dll"
+changelog: >
+  Initial release.

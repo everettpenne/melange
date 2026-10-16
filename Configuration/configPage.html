@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Comments</title>
+</head>
+<body>
+    <div id="CommentsConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="CommentsConfigForm">
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="MaxCommentLength">Maximum comment length</label>
+                        <input id="MaxCommentLength" name="MaxCommentLength" type="number" is="emby-input" min="1" />
+                        <div class="fieldDescription">Maximum characters per comment (applies to top-level comments and replies).</div>
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="AllowReplies" name="AllowReplies" type="checkbox" is="emby-checkbox" />
+                            <span>Allow threaded replies</span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription">Let users reply to existing comments.</div>
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="AllowReactions" name="AllowReactions" type="checkbox" is="emby-checkbox" />
+                            <span>Allow reactions</span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription">Let users react to comments with a like or emoji.</div>
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="AllowTimestampedComments" name="AllowTimestampedComments" type="checkbox" is="emby-checkbox" />
+                            <span>Allow timestamped comments</span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription">Let users attach a comment to a specific playback position.</div>
+                    </div>
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            var CommentsConfig = {
+                pluginUniqueId: '36b969ee-04a5-45de-bb8b-515f642280b3'
+            };
+
+            document.querySelector('#CommentsConfigPage')
+                .addEventListener('pageshow', function() {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(CommentsConfig.pluginUniqueId).then(function (config) {
+                        document.querySelector('#MaxCommentLength').value = config.MaxCommentLength;
+                        document.querySelector('#AllowReplies').checked = config.AllowReplies;
+                        document.querySelector('#AllowReactions').checked = config.AllowReactions;
+                        document.querySelector('#AllowTimestampedComments').checked = config.AllowTimestampedComments;
+                        Dashboard.hideLoadingMsg();
+                    });
+                });
+
+            document.querySelector('#CommentsConfigForm')
+                .addEventListener('submit', function(e) {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(CommentsConfig.pluginUniqueId).then(function (config) {
+                        config.MaxCommentLength = document.querySelector('#MaxCommentLength').value;
+                        config.AllowReplies = document.querySelector('#AllowReplies').checked;
+                        config.AllowReactions = document.querySelector('#AllowReactions').checked;
+                        config.AllowTimestampedComments = document.querySelector('#AllowTimestampedComments').checked;
+                        ApiClient.updatePluginConfiguration(CommentsConfig.pluginUniqueId, config).then(function (result) {
+                            Dashboard.processPluginConfigurationUpdateResult(result);
+                        });
+                    });
+
+                    e.preventDefault();
+                    return false;
+                });
+        </script>
+    </div>
+</body>
+</html>

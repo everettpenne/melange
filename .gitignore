@@ -1,0 +1,18 @@
+# Build output
+bin/
+obj/
+artifacts/
+
+# Local toolchain / package caches (optional to keep locally for offline builds)
+.dotnet/
+.dotnet-home/
+.nuget/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+
+# OS
+.DS_Store

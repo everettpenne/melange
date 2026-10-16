@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>Jellyfin.Plugin.Comments</RootNamespace>
+    <AssemblyName>Jellyfin.Plugin.Comments</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- Keep the build green on first run; style/naming nits stay warnings, not errors. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- XML docs are generated for IDE IntelliSense without failing on missing comments. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Jellyfin ships these assemblies in the server, so they are excluded from the
+      plugin's runtime output. Only the plugin's own DLL is packaged (see build.yaml).
+    -->
+    <PackageReference Include="Jellyfin.Controller" Version="10.11.5">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Jellyfin.Model" Version="10.11.5">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <!--
+      The server bundles Microsoft.Data.Sqlite (via EF Core / Emby.Server.Implementations),
+      so we rely on that copy instead of shipping our own SQLite.
+    -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.11">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!--
+    The server already ships a native sqlite3, so drop the bundled native libs that
+    Microsoft.Data.Sqlite pulls into the publish output. The installable artifact is
+    just Jellyfin.Plugin.Comments.dll (see build.yaml).
+  -->
+  <Target Name="StripNativeAssets" AfterTargets="Publish">
+    <RemoveDir Directories="$(PublishDir)runtimes" />
+  </Target>
+
+  <ItemGroup>
+    <None Remove="Configuration\configPage.html" />
+    <EmbeddedResource Include="Configuration\configPage.html" />
+  </ItemGroup>
+
+</Project>
